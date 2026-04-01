@@ -1,2 +1,2 @@
 # pulso-clinico
-Pulso Clínico — Proposta de Parceria (
+Pulso Clínico — Proposta de Parceria 
