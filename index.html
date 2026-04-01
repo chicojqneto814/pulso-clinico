@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pulso Clínico — Proposta de Parceria</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root{--verde:#00B37E;--verde-escuro:#007A54;--verde-neon:#00FF9C;--preto:#0A0F0D;--grafite:#141A17;--grafite-claro:#1E2821;--cinza:#8A9E94;--cinza-claro:#C5D4CC;--branco:#F5FAF7;--accent:#FFD166;}
+  *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+  body{background:var(--preto);color:var(--branco);font-family:'DM Sans',sans-serif;overflow-x:hidden;}
+
+  .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:60px 24px 80px;position:relative;background:radial-gradient(ellipse 80% 60% at 50% 20%,rgba(0,179,126,.18) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 80% 80%,rgba(0,179,126,.08) 0%,transparent 60%),var(--preto);overflow:hidden;}
+  .hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(0,179,126,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,179,126,.04) 1px,transparent 1px);background-size:60px 60px;animation:gridPulse 8s ease-in-out infinite;}
+  @keyframes gridPulse{0%,100%{opacity:.4}50%{opacity:1}}
+  .hc-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,179,126,.1);border:1px solid rgba(0,179,126,.3);border-radius:32px;padding:8px 20px;font-size:12px;font-weight:500;color:var(--verde);letter-spacing:1px;margin-bottom:32px;}
+  .hc-badge .dot{width:6px;height:6px;background:var(--verde-neon);border-radius:50%;animation:blink 2s ease-in-out infinite;}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+  .eyebrow{font-size:11px;font-weight:600;letter-spacing:4px;text-transform:uppercase;color:var(--verde);margin-bottom:24px;display:inline-flex;align-items:center;gap:12px;}
+  .eyebrow::before,.eyebrow::after{content:'';width:32px;height:1px;background:var(--verde);}
+  .hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(72px,14vw,160px);line-height:.9;letter-spacing:2px;color:var(--branco);margin-bottom:8px;}
+  .hero-title span{color:var(--verde);display:block;}
+  .hero-sub{font-family:'DM Serif Display',serif;font-style:italic;font-size:clamp(18px,3vw,26px);color:var(--cinza-claro);margin-bottom:48px;max-width:600px;}
+  .pills{display:flex;align-items:center;justify-content:center;gap:16px;margin:40px auto 0;flex-wrap:wrap;}
+  .pill{display:flex;align-items:center;gap:8px;background:var(--grafite-claro);border:1px solid rgba(0,179,126,.2);border-radius:60px;padding:12px 24px;font-size:14px;color:var(--cinza-claro);}
+  .pill strong{color:var(--verde);font-family:'Bebas Neue',sans-serif;font-size:24px;}
+  .scroll-hint{display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--cinza);font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-top:60px;animation:bounce 2s ease-in-out infinite;}
+  .scroll-hint svg{width:20px;height:20px;stroke:var(--verde);fill:none;}
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+  .sec{padding:100px 24px;}
+  .sec-inner{max-width:1100px;margin:0 auto;}
+  .lbl{font-size:10px;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:var(--verde);margin-bottom:16px;}
+  .ttl{font-family:'Bebas Neue',sans-serif;font-size:clamp(42px,7vw,72px);line-height:1;margin-bottom:24px;color:var(--branco);}
+  .ttl em{color:var(--verde);font-style:normal;}
+  .body-txt{font-size:17px;line-height:1.8;color:var(--cinza-claro);max-width:680px;}
+  .divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,rgba(0,179,126,.3),transparent);}
+  .bg-g{background:var(--grafite);}
+
+  .pain-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-top:48px;}
+  .pain-card{background:var(--grafite-claro);border:1px solid rgba(0,179,126,.1);border-radius:16px;padding:28px;transition:border-color .3s,transform .3s;}
+  .pain-card:hover{border-color:rgba(0,179,126,.4);transform:translateY(-4px);}
+  .pi{font-size:32px;margin-bottom:16px;display:block;}
+  .pain-card h4{font-size:15px;font-weight:600;color:var(--branco);margin-bottom:8px;}
+  .pain-card p{font-size:13px;color:var(--cinza);line-height:1.6;}
+
+  .ev-overview{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+  @media(max-width:768px){.ev-overview{grid-template-columns:1fr;gap:40px;}}
+  .stat-stack{display:flex;flex-direction:column;gap:24px;}
+  .stat-item{display:flex;align-items:flex-start;gap:20px;padding:24px;background:var(--grafite-claro);border-radius:16px;border-left:3px solid var(--verde);}
+  .sn{font-family:'Bebas Neue',sans-serif;font-size:52px;color:var(--verde);line-height:1;flex-shrink:0;}
+  .sd h5{font-size:14px;font-weight:600;color:var(--branco);margin-bottom:4px;}
+  .sd p{font-size:12px;color:var(--cinza);line-height:1.5;}
+
+  /* TIMELINE */
+  .tl{position:relative;margin-top:60px;}
+  .tl::before{content:'';position:absolute;left:40px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--verde) 0%,rgba(0,179,126,.1) 100%);}
+  .tl-item{display:flex;gap:36px;margin-bottom:36px;opacity:0;transform:translateX(-20px);transition:all .6s ease;}
+  .tl-item.visible{opacity:1;transform:translateX(0);}
+  .tl-mark{flex-shrink:0;width:80px;display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .tl-dot{width:16px;height:16px;background:var(--verde);border-radius:50%;border:3px solid var(--preto);box-shadow:0 0 0 3px var(--verde);z-index:2;}
+  .tl-date{font-family:'Bebas Neue',sans-serif;font-size:13px;color:var(--verde);letter-spacing:1px;text-align:center;}
+  .tl-card{flex:1;background:var(--grafite-claro);border:1px solid rgba(0,179,126,.12);border-radius:18px;padding:28px 32px;transition:border-color .3s;}
+  .tl-card:hover{border-color:rgba(0,179,126,.35);}
+  .ev-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--verde);background:rgba(0,179,126,.1);border-radius:20px;padding:4px 12px;margin-bottom:12px;}
+  .tl-card h3{font-family:'DM Serif Display',serif;font-size:clamp(17px,2.5vw,23px);color:var(--branco);margin-bottom:6px;}
+  .tl-card .theme{font-size:13px;color:var(--cinza);margin-bottom:20px;line-height:1.5;}
+  .roles-block{display:flex;flex-direction:column;gap:10px;}
+  .role-row{display:flex;align-items:flex-start;gap:10px;}
+  .role-badge{flex-shrink:0;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px;white-space:nowrap;margin-top:1px;}
+  .rb-r{background:rgba(0,179,126,.15);color:var(--verde);border:1px solid rgba(0,179,126,.25);}
+  .rb-c{background:rgba(255,255,255,.08);color:var(--branco);border:1px solid rgba(255,255,255,.12);}
+  .rb-a{background:rgba(255,209,102,.1);color:var(--accent);border:1px solid rgba(255,209,102,.2);}
+  .rb-m{background:rgba(100,180,255,.1);color:#7ec8ff;border:1px solid rgba(100,180,255,.2);}
+  .role-name{font-size:13px;font-weight:600;color:var(--cinza-claro);padding-top:3px;}
+  .role-desc{font-size:12px;color:var(--cinza);line-height:1.4;margin-top:2px;}
+
+  /* MESA REDONDA INLINE */
+  .mesa-inline{margin-top:16px;background:rgba(100,180,255,.05);border:1px solid rgba(100,180,255,.15);border-radius:12px;padding:14px 18px;display:flex;align-items:flex-start;gap:10px;}
+  .mesa-inline .mic{font-size:18px;flex-shrink:0;margin-top:2px;}
+  .mesa-inline p{font-size:12px;color:#a8d4f5;line-height:1.5;}
+  .mesa-inline strong{color:#7ec8ff;}
+
+  .tl-legenda{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:40px;}
+  .leg-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--cinza-claro);}
+  .leg-dot{width:10px;height:10px;border-radius:3px;}
+  .ld-r{background:rgba(0,179,126,.5);}
+  .ld-c{background:rgba(255,255,255,.25);}
+  .ld-a{background:rgba(255,209,102,.5);}
+  .ld-m{background:rgba(100,180,255,.5);}
+
+  .pub-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;}
+  @media(max-width:768px){.pub-grid{grid-template-columns:1fr 1fr;}}
+  .pub-card{background:var(--grafite-claro);border:1px solid rgba(0,179,126,.1);border-radius:16px;padding:28px 24px;text-align:center;transition:all .3s;}
+  .pub-card:hover{border-color:rgba(0,179,126,.35);transform:translateY(-4px);}
+  .pub-card .ic{font-size:36px;margin-bottom:16px;}
+  .pub-card h4{font-size:15px;font-weight:600;color:var(--branco);margin-bottom:6px;}
+  .pub-card p{font-size:12px;color:var(--cinza);line-height:1.5;}
+
+  .ent-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-top:60px;}
+  .ent-card{background:var(--grafite-claro);border:1px solid rgba(0,179,126,.1);border-radius:20px;padding:36px 32px;position:relative;overflow:hidden;transition:all .3s;}
+  .ent-card:hover{border-color:rgba(0,179,126,.4);transform:translateY(-6px);}
+  .ent-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--verde),var(--verde-neon));opacity:0;transition:opacity .3s;}
+  .ent-card:hover::before{opacity:1;}
+  .ent-n{font-family:'Bebas Neue',sans-serif;font-size:60px;color:rgba(0,179,126,.12);line-height:1;position:absolute;top:16px;right:20px;}
+  .ent-ic{font-size:28px;margin-bottom:20px;}
+  .ent-card h4{font-size:17px;font-weight:600;color:var(--branco);margin-bottom:10px;}
+  .ent-card p{font-size:14px;color:var(--cinza);line-height:1.7;}
+  .badge-add{display:inline-block;font-size:10px;font-weight:700;letter-spacing:2px;padding:4px 12px;background:rgba(255,209,102,.12);color:var(--accent);border-radius:20px;margin-top:12px;border:1px solid rgba(255,209,102,.2);}
+
+  .inv-sec{padding:100px 24px;position:relative;overflow:hidden;}
+  .inv-sec::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(0,179,126,.12) 0%,transparent 70%);pointer-events:none;}
+  .inv-inner{max-width:960px;margin:0 auto;}
+  .inv-title-area{text-align:center;margin-bottom:60px;}
+  .pacs{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:40px;}
+  @media(max-width:680px){.pacs{grid-template-columns:1fr;}}
+  .pac{border-radius:24px;padding:40px 36px;position:relative;overflow:hidden;}
+  .pac.main{background:rgba(0,179,126,.1);border:2px solid var(--verde);}
+  .pac.add{background:var(--grafite-claro);border:1px solid rgba(255,209,102,.25);}
+  .pac::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;}
+  .pac.main::before{background:linear-gradient(90deg,var(--verde-escuro),var(--verde),var(--verde-neon));}
+  .pac.add::before{background:linear-gradient(90deg,#b38a00,var(--accent),#ffe599);}
+  .pac-lbl{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:20px;display:inline-block;padding:5px 14px;border-radius:20px;}
+  .pac.main .pac-lbl{background:rgba(0,179,126,.15);color:var(--verde);}
+  .pac.add .pac-lbl{background:rgba(255,209,102,.12);color:var(--accent);}
+  .pac-price{font-family:'Bebas Neue',sans-serif;font-size:clamp(56px,9vw,90px);line-height:1;margin-bottom:4px;}
+  .pac.main .pac-price{color:var(--branco);}
+  .pac.add .pac-price{color:var(--accent);}
+  .pac-price sup{font-size:.38em;vertical-align:top;margin-top:12px;display:inline-block;}
+  .pac-price sub{font-size:.28em;font-family:'DM Sans',sans-serif;font-weight:400;color:var(--cinza);vertical-align:bottom;margin-bottom:8px;}
+  .pac-desc{font-size:13px;color:var(--cinza);margin-bottom:28px;line-height:1.6;}
+  .pac-list{list-style:none;display:flex;flex-direction:column;gap:10px;}
+  .pac-list li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--cinza-claro);line-height:1.5;}
+  .ck{flex-shrink:0;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;margin-top:1px;}
+  .pac.main .ck{background:rgba(0,179,126,.2);color:var(--verde);}
+  .pac.add .ck{background:rgba(255,209,102,.15);color:var(--accent);}
+
+  .cons-box{background:var(--grafite-claro);border:1px solid rgba(0,179,126,.2);border-radius:20px;padding:40px;margin-bottom:24px;}
+  .cons-ttl{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--verde);margin-bottom:24px;display:flex;align-items:center;gap:10px;}
+  .cons-ttl::after{content:'';flex:1;height:1px;background:rgba(0,179,126,.15);}
+  .custo-grid{display:grid;grid-template-columns:1fr auto;gap:8px 32px;margin-bottom:28px;}
+  .cn{font-size:13px;color:var(--cinza-claro);padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+  .cv{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--verde);padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);text-align:right;}
+  .ct-n{font-size:14px;font-weight:700;color:var(--branco);padding:12px 0 0;}
+  .ct-v{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--verde);padding:12px 0 0;text-align:right;}
+  .cotas{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(0,179,126,.08);border-radius:12px;overflow:hidden;margin-top:24px;}
+  @media(max-width:560px){.cotas{grid-template-columns:1fr;}}
+  .cota{background:var(--grafite);padding:24px 16px;text-align:center;}
+  .cota.dest{background:rgba(0,179,126,.06);}
+  .cota-v{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--verde);margin-bottom:4px;}
+  .cota.dest .cota-v{color:var(--verde-neon);}
+  .cota-l{font-size:12px;color:var(--cinza);line-height:1.4;}
+  .hc-note{background:rgba(0,179,126,.06);border:1px solid rgba(0,179,126,.18);border-radius:14px;padding:22px 28px;font-size:14px;color:var(--cinza-claro);line-height:1.7;}
+  .hc-note strong{color:var(--verde);}
+
+  .steps-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-top:56px;}
+  .step-card{background:var(--grafite-claro);border:1px solid rgba(0,179,126,.1);border-radius:20px;padding:32px 28px;position:relative;overflow:hidden;transition:all .3s;}
+  .step-card:hover{border-color:rgba(0,179,126,.35);transform:translateY(-5px);}
+  .step-num{font-family:'Bebas Neue',sans-serif;font-size:80px;color:rgba(0,179,126,.1);position:absolute;top:10px;right:20px;line-height:1;}
+  .step-ic{font-size:28px;margin-bottom:18px;}
+  .step-card h4{font-size:16px;font-weight:700;color:var(--branco);margin-bottom:8px;}
+  .step-card p{font-size:13px;color:var(--cinza);line-height:1.6;}
+  .prazo{display:inline-block;font-size:10px;font-weight:700;letter-spacing:2px;padding:4px 12px;background:rgba(0,179,126,.1);color:var(--verde);border-radius:20px;margin-top:12px;}
+  .regra-box{margin-top:48px;background:rgba(0,179,126,.06);border:1px solid rgba(0,179,126,.18);border-radius:16px;padding:32px 36px;}
+  .regra-box h4{font-size:15px;font-weight:700;color:var(--verde);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+  .regra-box ul{list-style:none;display:flex;flex-direction:column;gap:10px;}
+  .regra-box ul li{font-size:14px;color:var(--cinza-claro);padding-left:20px;position:relative;line-height:1.6;}
+  .regra-box ul li::before{content:'→';position:absolute;left:0;color:var(--verde);font-weight:700;}
+
+  .roi-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:60px;}
+  @media(max-width:768px){.roi-grid{grid-template-columns:1fr;}}
+  .roi-card{padding:36px;border-radius:20px;}
+  .roi-card.nao{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);}
+  .roi-card.sim{background:rgba(0,179,126,.08);border:1px solid rgba(0,179,126,.25);}
+  .roi-lbl{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;gap:8px;}
+  .roi-card.nao .roi-lbl{color:#888;}
+  .roi-card.sim .roi-lbl{color:var(--verde);}
+  .roi-list{list-style:none;display:flex;flex-direction:column;gap:12px;}
+  .roi-list li{display:flex;align-items:flex-start;gap:12px;font-size:14px;color:var(--cinza-claro);line-height:1.5;}
+  .mk{flex-shrink:0;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-top:2px;}
+  .roi-card.nao .mk{background:rgba(255,80,80,.1);color:#ff5050;}
+  .roi-card.sim .mk{background:rgba(0,179,126,.15);color:var(--verde);}
+
+  .par-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:16px;margin-top:60px;}
+  .par-card{background:var(--grafite-claro);border:1px solid rgba(0,179,126,.1);border-radius:16px;padding:24px 20px;text-align:center;transition:all .3s;}
+  .par-card:hover{border-color:rgba(0,179,126,.4);transform:translateY(-4px);}
+  .par-card.hc{border-color:rgba(0,179,126,.3);background:rgba(0,179,126,.08);}
+  .par-card .pi2{font-size:28px;margin-bottom:12px;}
+  .par-card h5{font-size:14px;font-weight:600;color:var(--branco);margin-bottom:4px;}
+  .par-card p{font-size:11px;color:var(--cinza);}
+  .par-card.hc h5{color:var(--verde);}
+  .adm-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1px;color:var(--verde);background:rgba(0,179,126,.1);border-radius:20px;padding:3px 10px;margin-top:8px;}
+
+  /* CTA FINAL */
+  .cta-sec{background:var(--preto);padding:120px 24px;text-align:center;position:relative;overflow:hidden;}
+  .cta-sec::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 80% at 50% 100%,rgba(0,179,126,.15) 0%,transparent 70%);}
+  .cta-inner{max-width:760px;margin:0 auto;position:relative;}
+  .cta-ttl{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,9vw,90px);line-height:1;color:var(--branco);margin-bottom:24px;}
+  .cta-ttl em{color:var(--verde);font-style:normal;}
+  .cta-body{font-size:18px;color:var(--cinza-claro);line-height:1.7;margin-bottom:56px;}
+  .cta-final-msg{display:flex;flex-direction:column;align-items:center;gap:20px;}
+  .cta-quote{font-family:'DM Serif Display',serif;font-style:italic;font-size:clamp(22px,4vw,34px);color:var(--verde-neon);line-height:1.3;max-width:640px;margin:0 auto;}
+  .cta-sub{font-size:14px;color:var(--cinza);margin-top:8px;letter-spacing:.5px;}
+  .cta-divider-line{width:60px;height:2px;background:linear-gradient(90deg,transparent,var(--verde),transparent);margin:12px auto;}
+  .cta-note{margin-top:40px;font-size:13px;color:var(--cinza);}
+
+  footer{border-top:1px solid rgba(0,179,126,.1);padding:40px 24px;text-align:center;max-width:1100px;margin:0 auto;}
+  footer p{font-size:13px;color:var(--cinza);}
+  footer strong{color:var(--verde);}
+
+  .reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease;}
+  .reveal.visible{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hc-badge"><span class="dot"></span>HealthComp · Proposta de Parceria Estratégica</div>
+  <div class="eyebrow">Apresentamos</div>
+  <div class="hero-title">Pulso<span>Clínico</span></div>
+  <p class="hero-sub">"Encontros para gestores que mantêm a clínica viva e em evolução"</p>
+  <div class="pills">
+    <div class="pill">🗓️ <strong>5</strong>&nbsp;Encontros</div>
+    <div class="pill">👥 <strong>25+</strong>&nbsp;Leads qualificados / evento</div>
+    <div class="pill">📍 Abr – Jun 2026</div>
+  </div>
+  <div class="scroll-hint">
+    <span>Explore a proposta</span>
+    <svg viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+  </div>
+</div>
+
+<!-- PROBLEMA -->
+<div class="sec bg-g">
+  <div class="sec-inner">
+    <div class="lbl reveal">O cenário</div>
+    <p class="reveal" style="font-family:'DM Serif Display',serif;font-size:clamp(28px,5vw,52px);line-height:1.3;color:var(--branco);max-width:800px;margin-bottom:48px;">Gestores de clínicas têm <strong style="color:var(--verde-neon)">pouco tempo, muita pressão</strong> e quase nenhum espaço de troca real.<br>As dores estão aí — mas ninguém está reunindo as soluções certas no mesmo lugar.</p>
+    <div class="pain-grid">
+      <div class="pain-card reveal"><span class="pi">⚡</span><h4>Gargalos operacionais invisíveis</h4><p>A clínica cresce mas o caos cresce junto. Falta de estrutura trava o processo silenciosamente.</p></div>
+      <div class="pain-card reveal"><span class="pi">💸</span><h4>Dinheiro escondido nos processos</h4><p>Glosas, retrabalho, ineficiência de equipe. O prejuízo acontece — o gestor não sabe onde.</p></div>
+      <div class="pain-card reveal"><span class="pi">📉</span><h4>Paciente não retorna</h4><p>Experiência mediana e ausência de fidelização custam receita recorrente todos os meses.</p></div>
+      <div class="pain-card reveal"><span class="pi">🤖</span><h4>IA e automação parecem distantes</h4><p>O mercado evolui. A clínica ainda opera igual a 5 anos atrás. O gestor sente que está ficando pra trás.</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SOBRE -->
+<div class="sec">
+  <div class="sec-inner">
+    <div class="lbl reveal">O que é o Pulso Clínico</div>
+    <div class="ev-overview">
+      <div>
+        <h2 class="ttl reveal">Uma série de <em>encontros</em> estratégicos para quem decide.</h2>
+        <p class="body-txt reveal">O Pulso Clínico é um ciclo de 5 encontros presenciais para gestores e proprietários de clínicas médicas. Não é evento genérico. É uma sala com 25 a 35 tomadores de decisão, conteúdo que resolve dor real, e um ambiente que gera conexão e negócio.</p>
+        <br>
+        <p class="body-txt reveal" style="font-size:15px;"><strong style="color:var(--verde)">A lógica:</strong> educa primeiro, gera confiança, e o negócio acontece naturalmente. Nenhum pitch forçado. Apenas autoridade e relacionamento.</p>
+      </div>
+      <div class="stat-stack">
+        <div class="stat-item reveal"><div class="sn">5</div><div class="sd"><h5>Encontros presenciais</h5><p>Abril, maio e junho de 2026 — quinzenais</p></div></div>
+        <div class="stat-item reveal"><div class="sn">25+</div><div class="sd"><h5>Leads qualificados mínimos</h5><p>Gestores e proprietários de clínicas médicas por evento</p></div></div>
+        <div class="stat-item reveal"><div class="sn">125+</div><div class="sd"><h5>Contatos no ciclo completo</h5><p>Mailing entregue a todos os co-realizadores</p></div></div>
+        <div class="stat-item reveal"><div class="sn">2x</div><div class="sd"><h5>Aparições garantidas por parceiro</h5><p>Destaque em 2 encontros + mesa redonda final</p></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- TIMELINE -->
+<div class="sec bg-g">
+  <div class="sec-inner">
+    <div class="lbl reveal">Programação</div>
+    <h2 class="ttl reveal">5 encontros. <em>5 dores reais.</em></h2>
+    <p class="body-txt reveal" style="margin-bottom:32px;">Cada parceiro tem papel definido em 2 encontros. Após cada apresentação, uma mesa redonda mediada pela HealthComp aprofunda o tema com gestores convidados da área.</p>
+
+    <div class="tl-legenda reveal">
+      <div class="leg-item"><div class="leg-dot ld-r"></div>Realizador</div>
+      <div class="leg-item"><div class="leg-dot ld-c"></div>Comandante da pauta central</div>
+      <div class="leg-item"><div class="leg-dot ld-a"></div>Apresentação 10 min</div>
+      <div class="leg-item"><div class="leg-dot ld-m"></div>Mesa redonda</div>
+    </div>
+
+    <div class="tl">
+
+      <!-- EV 1 -->
+      <div class="tl-item">
+        <div class="tl-mark"><div class="tl-dot"></div><div class="tl-date">24 ABR</div></div>
+        <div class="tl-card">
+          <div class="ev-tag">🚀 Lançamento</div>
+          <h3>Sua clínica está crescendo ou travando?</h3>
+          <p class="theme">Gestão, gargalos operacionais e estratégias de expansão</p>
+          <div class="roles-block">
+            <div class="role-row"><span class="role-badge rb-r">Realizador</span><div><div class="role-name">HealthComp</div><div class="role-desc">Condução do evento e curadoria do conteúdo</div></div></div>
+            <div class="role-row"><span class="role-badge rb-c">Comandante</span><div><div class="role-name">Licence · Leandro Cabral</div><div class="role-desc">Pauta central: crescimento estruturado, abertura de novas unidades e licenciamento</div></div></div>
+            <div class="role-row"><span class="role-badge rb-a">10 min</span><div><div class="role-name">Intesoftware</div><div class="role-desc">Como o software de gestão suporta o crescimento sem aumentar o caos operacional</div></div></div>
+          </div>
+          <div class="mesa-inline"><span class="mic">🎙️</span><p><strong>Mesa redonda</strong> — Gestores convidados da área debatem: como estruturar a clínica para crescer com segurança. Mediação: HealthComp.</p></div>
+        </div>
+      </div>
+
+      <!-- EV 2 -->
+      <div class="tl-item">
+        <div class="tl-mark"><div class="tl-dot"></div><div class="tl-date">08 MAI</div></div>
+        <div class="tl-card">
+          <div class="ev-tag">⚙️ Produtividade</div>
+          <h3>Mais pacientes, mesma equipe: como escalar sem contratar</h3>
+          <p class="theme">Produtividade, automação e comunicação inteligente com pacientes</p>
+          <div class="roles-block">
+            <div class="role-row"><span class="role-badge rb-r">Realizador</span><div><div class="role-name">HealthComp</div><div class="role-desc">Condução do evento e curadoria do conteúdo</div></div></div>
+            <div class="role-row"><span class="role-badge rb-c">Comandante</span><div><div class="role-name">Sunchat</div><div class="role-desc">Pauta central: automação de atendimento, chatbot e escala sem aumento de equipe</div></div></div>
+            <div class="role-row"><span class="role-badge rb-a">10 min</span><div><div class="role-name">Conduzza · Victor</div><div class="role-desc">Como atrair mais pacientes qualificados sem depender de indicação</div></div></div>
+          </div>
+          <div class="mesa-inline"><span class="mic">🎙️</span><p><strong>Mesa redonda</strong> — Gestores convidados debatem: onde a equipe perde mais tempo e quais processos podem ser automatizados hoje. Mediação: HealthComp.</p></div>
+        </div>
+      </div>
+
+      <!-- EV 3 -->
+      <div class="tl-item">
+        <div class="tl-mark"><div class="tl-dot"></div><div class="tl-date">22 MAI</div></div>
+        <div class="tl-card">
+          <div class="ev-tag">💰 Financeiro</div>
+          <h3>Dinheiro escondido: onde sua clínica está perdendo receita</h3>
+          <p class="theme">Faturamento, glosas e custos invisíveis revelados com dados reais</p>
+          <div class="roles-block">
+            <div class="role-row"><span class="role-badge rb-r">Realizador</span><div><div class="role-name">HealthComp</div><div class="role-desc">Condução do evento e curadoria do conteúdo</div></div></div>
+            <div class="role-row"><span class="role-badge rb-c">Comandante</span><div><div class="role-name">Dr. Jefferson IA</div><div class="role-desc">Pauta central: como a IA identifica perdas de receita e gargalos financeiros em tempo real</div></div></div>
+            <div class="role-row"><span class="role-badge rb-a">10 min</span><div><div class="role-name">Licence · Leandro Cabral</div><div class="role-desc">Custos ocultos em estrutura e engenharia que impactam diretamente o resultado da clínica</div></div></div>
+          </div>
+          <div class="mesa-inline"><span class="mic">🎙️</span><p><strong>Mesa redonda</strong> — Gestores convidados da área financeira debatem: glosas, controle de custos e como enxergar o que os números escondem. Mediação: HealthComp.</p></div>
+        </div>
+      </div>
+
+      <!-- EV 4 -->
+      <div class="tl-item">
+        <div class="tl-mark"><div class="tl-dot"></div><div class="tl-date">05 JUN</div></div>
+        <div class="tl-card">
+          <div class="ev-tag">❤️ Retenção</div>
+          <h3>A clínica que o paciente quer voltar</h3>
+          <p class="theme">Experiência do paciente, marketing médico e fidelização estratégica</p>
+          <div class="roles-block">
+            <div class="role-row"><span class="role-badge rb-r">Realizador</span><div><div class="role-name">HealthComp</div><div class="role-desc">Condução do evento e curadoria do conteúdo</div></div></div>
+            <div class="role-row"><span class="role-badge rb-c">Comandante</span><div><div class="role-name">Conduzza · Victor</div><div class="role-desc">Pauta central: estratégia de marketing médico e fidelização de pacientes</div></div></div>
+            <div class="role-row"><span class="role-badge rb-a">10 min</span><div><div class="role-name">Sunchat</div><div class="role-desc">Comunicação pós-consulta e reativação automática de pacientes inativos</div></div></div>
+            <div class="role-row"><span class="role-badge rb-a">10 min</span><div><div class="role-name">Dr. Jefferson IA</div><div class="role-desc">Como a IA personaliza a experiência e aumenta o retorno de pacientes</div></div></div>
+          </div>
+          <div class="mesa-inline"><span class="mic">🎙️</span><p><strong>Mesa redonda</strong> — Gestores convidados debatem: o que faz o paciente voltar — e o que faz ele ir embora. Mediação: HealthComp.</p></div>
+        </div>
+      </div>
+
+      <!-- EV 5 -->
+      <div class="tl-item">
+        <div class="tl-mark"><div class="tl-dot"></div><div class="tl-date">19 JUN</div></div>
+        <div class="tl-card" style="border-color:rgba(0,179,126,.3);">
+          <div class="ev-tag" style="background:rgba(0,179,126,.2);">🔮 Encerramento · Todos os Parceiros</div>
+          <h3>Clínica do futuro: IA, tecnologia e a gestão que vem por aí</h3>
+          <p class="theme">Grande mesa redonda com todos os co-realizadores · Tendências, inovação e o futuro da gestão médica</p>
+          <div class="roles-block">
+            <div class="role-row"><span class="role-badge rb-r">Realizador</span><div><div class="role-name">HealthComp</div><div class="role-desc">Mediação do encontro e encerramento do ciclo</div></div></div>
+            <div class="role-row"><span class="role-badge rb-c">Comandante</span><div><div class="role-name">Intesoftware</div><div class="role-desc">Pauta central: a gestão integrada da clínica do futuro — do software à operação</div></div></div>
+            <div class="role-row"><span class="role-badge rb-m">Mesa Redonda</span><div><div class="role-name">Todos os co-realizadores</div><div class="role-desc">Dr. Jefferson IA · Sunchat · Conduzza · Licence — cada um traz sua visão do futuro da clínica médica</div></div></div>
+          </div>
+          <div class="mesa-inline"><span class="mic">🎙️</span><p><strong>Grande mesa redonda final</strong> — Todo o ecossistema reunido debatendo com gestores: onde a clínica médica estará em 3 anos e como chegar lá preparado. Mediação: HealthComp.</p></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- PÚBLICO -->
+<div class="sec">
+  <div class="sec-inner">
+    <div class="lbl reveal">Quem vai estar na sala</div>
+    <h2 class="ttl reveal">O público que <em>decide</em> e <em>compra</em>.</h2>
+    <p class="body-txt reveal">Não enchemos sala de curiosos. Cada inscrição é validada. O evento é para quem gerencia, assina e decide na clínica médica.</p>
+    <div class="pub-grid">
+      <div class="pub-card reveal"><div class="ic">🩺</div><h4>Médico proprietário</h4><p>Dono da clínica, tomador de decisão final</p></div>
+      <div class="pub-card reveal"><div class="ic">📋</div><h4>Administrador de clínica</h4><p>Responsável pela operação e gestão do negócio</p></div>
+      <div class="pub-card reveal"><div class="ic">💼</div><h4>Gestor financeiro</h4><p>Responsável por custos, faturamento e resultados</p></div>
+      <div class="pub-card reveal"><div class="ic">📊</div><h4>Coordenador administrativo</h4><p>Quem influencia as decisões operacionais do dia a dia</p></div>
+      <div class="pub-card reveal"><div class="ic">🏥</div><h4>Clínicas médicas 10+ colaboradores</h4><p>Perfil estruturado com dependência real de tecnologia</p></div>
+      <div class="pub-card reveal"><div class="ic">🏨</div><h4>Gestores de hospitais</h4><p>Decisores de TI e operações em estruturas hospitalares</p></div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ENTREGAS -->
+<div class="sec bg-g">
+  <div class="sec-inner">
+    <div class="lbl reveal">O que você recebe como co-realizador</div>
+    <h2 class="ttl reveal">Mais do que visibilidade.<br><em>Acesso real.</em></h2>
+    <p class="body-txt reveal">Você não é só um logo no banner. Você é co-realizador. Sua marca está dentro da sala, na mão do gestor — sempre dentro do padrão de comunicação do Pulso Clínico.</p>
+    <div class="ent-grid">
+      <div class="ent-card reveal"><div class="ent-n">01</div><div class="ent-ic">📬</div><h4>Mailing completo dos participantes</h4><p>Lista qualificada com contato de todos os presentes — gestores validados, com cargo e contexto. 25+ por evento, 125+ no ciclo.</p></div>
+      <div class="ent-card reveal"><div class="ent-n">02</div><div class="ent-ic">🎤</div><h4>Palco garantido em 2 encontros</h4><p>Papel definido: Comandante da pauta em 1 evento + Apresentação de 10 min em outro. Exposição estratégica, não genérica.</p></div>
+      <div class="ent-card reveal"><div class="ent-n">03</div><div class="ent-ic">🏷️</div><h4>Marca nos materiais do evento</h4><p>Seu nome e logo nos convites, artes e materiais — sempre em comunicação conjunta dentro da identidade visual do Pulso Clínico.</p></div>
+      <div class="ent-card reveal"><div class="ent-n">04</div><div class="ent-ic">📒</div><h4>Marca no brinde (bloco de notas)</h4><p>Todo participante leva para casa o brinde com a marca de todos os co-realizadores. Presença física no dia a dia do gestor.</p></div>
+      <div class="ent-card reveal"><div class="ent-n">05</div><div class="ent-ic">🎬</div><h4>Fotos + vídeo geral do evento</h4><p>Material fotográfico e vídeo geral do encontro incluído no pacote — para postagens em colabs e reforço de presença no mercado de saúde.</p></div>
+      <div class="ent-card reveal"><div class="ent-n">06</div><div class="ent-ic">🎙️</div><h4>Mesa redonda em cada encontro</h4><p>Após sua apresentação, uma mesa redonda com gestores convidados da área — mediada pela HealthComp — aprofunda o tema e amplifica sua autoridade.</p></div>
+      <div class="ent-card reveal"><div class="ent-n">07</div><div class="ent-ic">🔮</div><h4>Mesa redonda final — todos juntos</h4><p>No 5º encontro, todos os co-realizadores compartilham o palco na grande mesa redonda de encerramento do ciclo.</p></div>
+      <div class="ent-card reveal"><div class="ent-n">08</div><div class="ent-ic">🍽️</div><h4>Evento 100% pronto — você só aparece</h4><p>Coffee break, estrutura, comunicação e logística pela HealthComp. Você apresenta, conecta e aproveita. Nada para montar.</p></div>
+      <div class="ent-card reveal">
+        <div class="ent-n">+</div><div class="ent-ic">🎥</div>
+        <h4>Vídeo exclusivo da sua empresa</h4>
+        <p>Produção de vídeo individualizado da sua solução para uso nas suas próprias redes sociais — separado do material geral do evento.</p>
+        <span class="badge-add">⭐ Add-on · R$350 por evento</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- INVESTIMENTO -->
+<div class="inv-sec">
+  <div class="inv-inner">
+    <div class="inv-title-area">
+      <div class="lbl reveal">Investimento</div>
+      <h2 class="ttl reveal">Um consórcio inteligente.<br><em>Custo dividido. Resultado compartilhado.</em></h2>
+      <p class="body-txt reveal" style="margin:0 auto;text-align:center">Você entra com a cota, a HealthComp opera tudo. Sem surpresa, sem custo extra oculto.</p>
+    </div>
+    <div class="pacs reveal">
+      <div class="pac main">
+        <div class="pac-lbl">Cota Co-realizador</div>
+        <div class="pac-price"><sup>R$</sup>3.500<sub>/evento</sub></div>
+        <p class="pac-desc">Por co-realizador · Série de 5 encontros · Total R$17.500</p>
+        <ul class="pac-list">
+          <li><span class="ck">✓</span>Mailing qualificado dos participantes</li>
+          <li><span class="ck">✓</span>Comandante da pauta em 1 encontro</li>
+          <li><span class="ck">✓</span>Apresentação de 10 min em 1 encontro</li>
+          <li><span class="ck">✓</span>Mesa redonda após cada apresentação</li>
+          <li><span class="ck">✓</span>Mesa redonda no encontro final</li>
+          <li><span class="ck">✓</span>Marca nos materiais e brindes</li>
+          <li><span class="ck">✓</span>Fotos + vídeo geral do evento</li>
+          <li><span class="ck">✓</span>Evento 100% organizado e executado</li>
+        </ul>
+      </div>
+      <div class="pac add">
+        <div class="pac-lbl">Add-on Opcional</div>
+        <div class="pac-price"><sup>R$</sup>350<sub>/evento</sub></div>
+        <p class="pac-desc">Conteúdo individualizado da sua empresa para uso nas suas redes</p>
+        <ul class="pac-list">
+          <li><span class="ck">✓</span>Vídeo exclusivo da sua solução/empresa</li>
+          <li><span class="ck">✓</span>Para uso nas <em>suas</em> redes sociais</li>
+          <li><span class="ck">✓</span>Produção profissional no dia do evento</li>
+          <li><span class="ck">✓</span>Entregue para uso exclusivo independente</li>
+        </ul>
+        <br>
+        <p style="font-size:12px;color:var(--cinza);border-top:1px solid rgba(255,209,102,.1);padding-top:16px;margin-top:4px;">⚠️ <strong style="color:var(--cinza-claro)">Importante:</strong> a divulgação oficial do evento segue a identidade visual do Pulso Clínico. O vídeo individual é para uso exclusivo da contratante, nas suas próprias redes.</p>
+      </div>
+    </div>
+
+    <div class="cons-box reveal">
+      <div class="cons-ttl">Composição do custo por evento</div>
+      <div class="custo-grid">
+        <div class="cn">🏠 Espaço (CDL)</div><div class="cv">R$ 900</div>
+        <div class="cn">🎁 Brinde · bloco de notas (35 × R$25)</div><div class="cv">R$ 875</div>
+        <div class="cn">☕ Coffee break (35 × R$20)</div><div class="cv">R$ 700</div>
+        <div class="cn">🎬 Filmagem + fotos gerais</div><div class="cv">R$ 700</div>
+        <div class="cn">📣 Tráfego pago e custos extras</div><div class="cv">R$ 325</div>
+        <div class="ct-n">Total por evento</div><div class="ct-v">R$ 3.500</div>
+      </div>
+      <div class="cotas">
+        <div class="cota"><div class="cota-v">4</div><div class="cota-l">parceiros<br>R$875 / cada</div></div>
+        <div class="cota dest"><div class="cota-v">5</div><div class="cota-l">parceiros<br>R$700 / cada</div></div>
+        <div class="cota"><div class="cota-v">R$17.500</div><div class="cota-l">total da série<br>5 eventos</div></div>
+      </div>
+    </div>
+
+    <div class="hc-note reveal">
+      <strong>🏗️ Por que a HealthComp não entra no rateio?</strong><br>
+      A HealthComp é a <strong>organizadora e administradora</strong> do ciclo — responsável por toda a estrutura operacional, comunicação, logística e execução. Sua "taxa de administração" é o custo de mão de obra para rodar tudo. Você investe no custo direto. A HealthComp entrega tudo funcionando. <strong>Máximo de 5 cotas por evento.</strong>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- FECHAMENTO -->
+<div class="sec" style="background:var(--preto);">
+  <div class="sec-inner">
+    <div class="lbl reveal">Para confirmar sua parceria</div>
+    <h2 class="ttl reveal">O que precisamos<br><em>de você.</em></h2>
+    <p class="body-txt reveal">Para garantir que toda divulgação já saia alinhada e dentro da identidade visual do Pulso Clínico desde o primeiro evento — precisamos dos seguintes materiais assim que você confirmar sua cota.</p>
+    <div class="steps-grid">
+      <div class="step-card reveal"><div class="step-num">1</div><div class="step-ic">🖼️</div><h4>Logo em alta resolução</h4><p>Arquivo PNG transparente ou SVG. Versões clara e escura se houver. Sua marca será inserida dentro da identidade visual do Pulso Clínico.</p><span class="prazo">Ao confirmar</span></div>
+      <div class="step-card reveal"><div class="step-num">2</div><div class="step-ic">📝</div><h4>Descrição da empresa (até 3 linhas)</h4><p>O que sua empresa faz e qual dor resolve para clínicas médicas. Usado nas comunicações e na apresentação oficial do evento.</p><span class="prazo">Ao confirmar</span></div>
+      <div class="step-card reveal"><div class="step-num">3</div><div class="step-ic">🎤</div><h4>Tema da sua apresentação</h4><p>O assunto que você quer abordar — alinhado ao tema do encontro em que você é comandante. A HealthComp valida o encaixe na curadoria.</p><span class="prazo">Até 10 dias antes</span></div>
+      <div class="step-card reveal"><div class="step-num">4</div><div class="step-ic">📲</div><h4>Divulgação para sua base</h4><p>Pedimos que você compartilhe o evento com seus clientes e leads. Quanto mais alcance conjunto, mais qualificados os participantes para todos.</p><span class="prazo">A cada evento</span></div>
+      <div class="step-card reveal"><div class="step-num">5</div><div class="step-ic">✅</div><h4>Confirmação da cota + termo</h4><p>Envio do termo de parceria e confirmação do investimento. Máximo de 5 co-realizadores por evento.</p><span class="prazo">Para garantir vaga</span></div>
+    </div>
+    <div class="regra-box reveal">
+      <h4>📌 Regras de divulgação</h4>
+      <ul>
+        <li>A comunicação do Pulso Clínico segue a identidade visual do evento — padrão único para todos os encontros</li>
+        <li>A divulgação oficial sempre partirá do Instagram da HealthComp — mas cada parceiro é livre para fazer suas próprias divulgações e repostagens</li>
+        <li>Posts em colabs e repostagens são incentivados — fortalecem todos ao mesmo tempo</li>
+        <li>A marca de cada parceiro aparece nos materiais junto aos demais co-realizadores, dentro do padrão do evento</li>
+        <li>Não está incluso material gráfico individualizado com identidade visual própria de cada empresa</li>
+        <li>Quem contratar o add-on (R$350/evento) recebe vídeo individualizado para uso exclusivo nas suas redes</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ROI -->
+<div class="sec bg-g">
+  <div class="sec-inner">
+    <div class="lbl reveal">Por que faz sentido</div>
+    <h2 class="ttl reveal">Publicidade comum<br>vs. <em>presença real.</em></h2>
+    <div class="roi-grid">
+      <div class="roi-card nao reveal">
+        <div class="roi-lbl">✕ Publicidade tradicional</div>
+        <ul class="roi-list">
+          <li><span class="mk">✕</span>Você paga e não sabe quem viu</li>
+          <li><span class="mk">✕</span>Lead frio, sem contexto</li>
+          <li><span class="mk">✕</span>Concorre com 20 outros anúncios</li>
+          <li><span class="mk">✕</span>Sem relação com o decisor</li>
+          <li><span class="mk">✕</span>Custo por lead elevado e incerto</li>
+          <li><span class="mk">✕</span>Você não controla o que acontece</li>
+        </ul>
+      </div>
+      <div class="roi-card sim reveal">
+        <div class="roi-lbl">✓ Co-realizador Pulso Clínico</div>
+        <ul class="roi-list">
+          <li><span class="mk">✓</span>25+ gestores qualificados por evento</li>
+          <li><span class="mk">✓</span>Você está na frente deles, ao vivo</li>
+          <li><span class="mk">✓</span>Confiança construída antes da venda</li>
+          <li><span class="mk">✓</span>Mailing validado pós-evento</li>
+          <li><span class="mk">✓</span>Custo compartilhado, resultado exclusivo</li>
+          <li><span class="mk">✓</span>Posicionado como referência no nicho</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- PARCEIROS -->
+<div class="sec">
+  <div class="sec-inner">
+    <div class="lbl reveal">Ecossistema</div>
+    <h2 class="ttl reveal">Empresas que <em>complementam,</em><br>não concorrem.</h2>
+    <p class="body-txt reveal">Um conjunto de soluções que cobre toda a jornada da clínica médica — da infraestrutura ao marketing. Juntos, somos a prateleira completa do gestor.</p>
+    <div class="par-grid">
+      <div class="par-card hc reveal"><div class="pi2">🏥</div><h5>HealthComp</h5><p>Tecnologia e infraestrutura para clínicas</p><div class="adm-badge">Realizadora</div></div>
+      <div class="par-card reveal"><div class="pi2">💻</div><h5>Intesoftware</h5><p>Software de gestão para clínicas</p></div>
+      <div class="par-card reveal"><div class="pi2">💬</div><h5>Sunchat</h5><p>Chatbot inteligente para clínicas</p></div>
+      <div class="par-card reveal"><div class="pi2">🤖</div><h5>Dr. Jefferson IA</h5><p>Inteligência artificial integrada</p></div>
+      <div class="par-card reveal"><div class="pi2">📜</div><h5>Licence · Leandro Cabral</h5><p>Licenças de engenharia para saúde</p></div>
+      <div class="par-card reveal"><div class="pi2">📣</div><h5>Conduzza · Victor</h5><p>Marketing médico especializado</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA FINAL -->
+<div class="cta-sec">
+  <div class="cta-inner">
+    <div class="lbl reveal" style="text-align:center">Próximo passo</div>
+    <h2 class="cta-ttl reveal">Máximo <em>5 vagas</em><br>por evento.</h2>
+    <p class="cta-body reveal">O Pulso Clínico começa em <strong>24 de abril de 2026</strong>. As vagas são limitadas e a composição do consórcio define o impacto de cada encontro. Quem confirmar primeiro garante posição de destaque desde o lançamento.</p>
+    <div class="cta-final-msg reveal">
+      <div class="cta-divider-line"></div>
+      <p class="cta-quote">"O mercado de saúde precisa de referências. Vamos construir essa referência juntos."</p>
+      <p class="cta-sub">Entre em contato e confirme sua cota no Pulso Clínico · Início: 24/04/2026</p>
+      <div class="cta-divider-line"></div>
+    </div>
+    <p class="cta-note reveal">Máximo 5 co-realizadores por evento · Vagas a confirmar</p>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 <strong>HealthComp</strong> · Grupo Ecomp · Pulso Clínico — Encontros para Gestores de Saúde</p>
+</footer>
+
+<script>
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold:0.08, rootMargin:'0px 0px -30px 0px' });
+  document.querySelectorAll('.reveal, .tl-item').forEach((el,i) => {
+    obs.observe(el);
+    if(el.classList.contains('tl-item')) el.style.transitionDelay = `${i*0.12}s`;
+  });
+</script>
+</body>
+</html>
