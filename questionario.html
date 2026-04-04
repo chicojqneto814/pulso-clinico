@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pulso Clínico — Alinhamento de Parceiros</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Serif+Display:ital@1&display=swap" rel="stylesheet">
+<style>
+  :root{--verde:#00B37E;--verde-neon:#00FF9C;--verde-escuro:#007A54;--preto:#0A0F0D;--grafite:#141A17;--grafite-claro:#1E2821;--cinza:#8A9E94;--cinza-claro:#C5D4CC;--branco:#F5FAF7;--accent:#FFD166;}
+  *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+  body{background:var(--preto);color:var(--branco);font-family:'DM Sans',sans-serif;min-height:100vh;}
+
+  .header{background:linear-gradient(135deg,var(--grafite) 0%,var(--preto) 100%);border-bottom:1px solid rgba(0,179,126,.2);padding:48px 24px 40px;text-align:center;position:relative;overflow:hidden;}
+  .header::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(0,179,126,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,179,126,.03) 1px,transparent 1px);background-size:40px 40px;}
+  .header-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,179,126,.1);border:1px solid rgba(0,179,126,.3);border-radius:30px;padding:6px 16px;font-size:11px;font-weight:600;color:var(--verde);letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;}
+  .header-badge .dot{width:6px;height:6px;background:var(--verde-neon);border-radius:50%;animation:blink 2s infinite;}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+  .header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,8vw,72px);line-height:.95;color:var(--branco);margin-bottom:6px;position:relative;}
+  .header h1 em{color:var(--verde);font-style:normal;}
+  .header-sub{font-family:'DM Serif Display',serif;font-style:italic;font-size:clamp(14px,3vw,18px);color:var(--cinza-claro);margin-bottom:16px;position:relative;}
+  .header-note{font-size:13px;color:var(--cinza);max-width:540px;margin:0 auto;line-height:1.6;position:relative;}
+
+  /* VIEW TOGGLE */
+  .view-toggle{display:flex;justify-content:center;gap:8px;padding:16px 24px;background:var(--grafite);border-bottom:1px solid rgba(0,179,126,.1);}
+  .toggle-btn{padding:8px 20px;border-radius:30px;border:1px solid rgba(0,179,126,.2);background:transparent;color:var(--cinza);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+  .toggle-btn.active{background:rgba(0,179,126,.15);color:var(--verde);border-color:rgba(0,179,126,.4);}
+
+  .progress-wrap{background:var(--grafite);border-bottom:1px solid rgba(0,179,126,.1);padding:14px 24px;position:sticky;top:0;z-index:100;}
+  .progress-inner{max-width:680px;margin:0 auto;display:flex;align-items:center;gap:12px;}
+  .progress-bar-bg{flex:1;height:4px;background:rgba(255,255,255,.06);border-radius:2px;}
+  .progress-bar{height:4px;background:linear-gradient(90deg,var(--verde),var(--verde-neon));border-radius:2px;transition:width .4s ease;}
+  .progress-text{font-size:12px;color:var(--cinza);white-space:nowrap;}
+
+  .form-wrap{max-width:680px;margin:0 auto;padding:40px 24px 80px;}
+
+  .section-block{margin-bottom:12px;background:var(--grafite-claro);border:1px solid rgba(0,179,126,.1);border-radius:20px;overflow:hidden;transition:border-color .3s;}
+  .section-block.active{border-color:rgba(0,179,126,.35);}
+  .section-header{padding:20px 24px;cursor:pointer;display:flex;align-items:center;gap:16px;user-select:none;}
+  .section-num{font-family:'Bebas Neue',sans-serif;font-size:28px;color:rgba(0,179,126,.3);line-height:1;flex-shrink:0;transition:color .3s;}
+  .section-block.active .section-num{color:var(--verde);}
+  .section-header-text{flex:1;}
+  .section-header-text h3{font-size:15px;font-weight:600;color:var(--branco);margin-bottom:2px;}
+  .section-header-text p{font-size:12px;color:var(--cinza);}
+  .section-chevron{font-size:14px;color:var(--cinza);transition:transform .3s;}
+  .section-block.open .section-chevron{transform:rotate(180deg);}
+  .section-status{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:20px;flex-shrink:0;}
+  .section-status.done{background:rgba(0,179,126,.15);color:var(--verde);}
+  .section-status.pending{background:rgba(255,255,255,.05);color:var(--cinza);}
+  .section-body{display:none;padding:0 24px 24px;}
+  .section-block.open .section-body{display:block;}
+
+  .question{margin-bottom:24px;}
+  .question:last-child{margin-bottom:0;}
+  .question label{display:block;font-size:14px;font-weight:500;color:var(--cinza-claro);margin-bottom:10px;line-height:1.5;}
+  .question label strong{color:var(--branco);display:block;font-size:15px;margin-bottom:4px;}
+
+  .options{display:flex;flex-direction:column;gap:8px;}
+  .options.horizontal{flex-direction:row;flex-wrap:wrap;}
+  .opt-label{display:flex;align-items:center;gap:10px;cursor:pointer;}
+  .opt-input{display:none;}
+  .opt-box{flex:1;padding:12px 16px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-size:14px;color:var(--cinza-claro);cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px;}
+  .opt-box:hover{border-color:rgba(0,179,126,.3);background:rgba(0,179,126,.05);}
+  .opt-input:checked + .opt-box{border-color:var(--verde);background:rgba(0,179,126,.12);color:var(--branco);}
+  .opt-marker{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+  .opt-input:checked + .opt-box .opt-marker{border-color:var(--verde);background:var(--verde);}
+  .opt-input:checked + .opt-box .opt-marker::after{content:'✓';font-size:10px;color:var(--preto);font-weight:700;}
+  .opt-marker.square{border-radius:4px;}
+  .opt-input[type=checkbox]:checked + .opt-box .opt-marker{border-color:var(--verde);background:var(--verde);border-radius:4px;}
+
+  .scale-wrap{display:flex;gap:6px;align-items:center;}
+  .scale-btn{flex:1;height:40px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:var(--cinza);font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;}
+  .scale-btn:hover{border-color:rgba(0,179,126,.3);color:var(--cinza-claro);}
+  .scale-btn.selected{border-color:var(--verde);background:rgba(0,179,126,.12);color:var(--verde);}
+  .scale-labels{display:flex;justify-content:space-between;margin-top:6px;}
+  .scale-labels span{font-size:11px;color:var(--cinza);}
+
+  .txt-area{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;color:var(--branco);font-family:'DM Sans',sans-serif;font-size:14px;padding:14px 16px;resize:vertical;min-height:80px;transition:border-color .2s;}
+  .txt-area:focus{outline:none;border-color:rgba(0,179,126,.4);}
+  .txt-area::placeholder{color:var(--cinza);}
+  .txt-input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;color:var(--branco);font-family:'DM Sans',sans-serif;font-size:14px;padding:12px 16px;transition:border-color .2s;}
+  .txt-input:focus{outline:none;border-color:rgba(0,179,126,.4);}
+  .txt-input::placeholder{color:var(--cinza);}
+
+  .q-divider{height:1px;background:rgba(255,255,255,.06);margin:20px 0;}
+  .id-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media(max-width:480px){.id-grid{grid-template-columns:1fr;}}
+
+  /* CONDICIONAL */
+  .cond-box{display:none;margin-top:10px;padding:14px 16px;background:rgba(255,209,102,.06);border:1px solid rgba(255,209,102,.2);border-radius:10px;font-size:13px;color:var(--accent);line-height:1.6;}
+  .cond-box.show{display:block;}
+  .cond-input{display:none;margin-top:10px;}
+  .cond-input.show{display:block;}
+
+  .submit-wrap{text-align:center;margin-top:40px;}
+  .btn-submit{display:inline-flex;align-items:center;gap:10px;background:var(--verde);color:var(--preto);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;padding:16px 36px;border-radius:60px;border:none;cursor:pointer;letter-spacing:.5px;transition:all .3s;}
+  .btn-submit:hover{background:var(--verde-neon);transform:translateY(-2px);box-shadow:0 16px 40px rgba(0,179,126,.3);}
+
+  /* PAINEL DE RESPOSTAS */
+  #painelView{display:none;max-width:900px;margin:0 auto;padding:40px 24px 80px;}
+  .painel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;flex-wrap:wrap;gap:12px;}
+  .painel-header h2{font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--branco);}
+  .painel-header h2 em{color:var(--verde);font-style:normal;}
+  .painel-stats{display:flex;gap:12px;flex-wrap:wrap;}
+  .painel-stat{background:var(--grafite-claro);border:1px solid rgba(0,179,126,.15);border-radius:12px;padding:12px 20px;text-align:center;}
+  .painel-stat .val{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--verde);display:block;}
+  .painel-stat .lbl{font-size:11px;color:var(--cinza);display:block;}
+
+  .resp-card{background:var(--grafite-claro);border:1px solid rgba(0,179,126,.1);border-radius:18px;padding:28px;margin-bottom:16px;position:relative;}
+  .resp-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;flex-wrap:wrap;gap:8px;}
+  .resp-empresa{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--verde);}
+  .resp-nome{font-size:13px;color:var(--cinza);margin-top:2px;}
+  .resp-data{font-size:11px;color:var(--cinza);background:rgba(255,255,255,.05);padding:4px 10px;border-radius:20px;}
+  .resp-btn-del{background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.2);color:#ff6b6b;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;cursor:pointer;transition:all .2s;}
+  .resp-btn-del:hover{background:rgba(255,80,80,.2);}
+
+  .resp-section{margin-bottom:16px;}
+  .resp-section-title{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--verde);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+  .resp-section-title::after{content:'';flex:1;height:1px;background:rgba(0,179,126,.15);}
+  .resp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;}
+  .resp-item{background:rgba(255,255,255,.04);border-radius:8px;padding:10px 14px;}
+  .resp-item .rq{font-size:11px;color:var(--cinza);margin-bottom:4px;line-height:1.4;}
+  .resp-item .ra{font-size:13px;color:var(--cinza-claro);font-weight:500;line-height:1.4;}
+  .resp-item .ra.highlight{color:var(--verde);}
+
+  .empty-state{text-align:center;padding:80px 24px;}
+  .empty-state .icon{font-size:48px;margin-bottom:16px;}
+  .empty-state h3{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--cinza);margin-bottom:8px;}
+  .empty-state p{font-size:14px;color:var(--cinza);line-height:1.6;}
+
+  .success-banner{background:rgba(0,179,126,.1);border:1px solid rgba(0,179,126,.3);border-radius:14px;padding:20px 24px;margin-bottom:32px;display:none;text-align:center;}
+  .success-banner.show{display:block;}
+  .success-banner h3{color:var(--verde);font-size:18px;font-weight:700;margin-bottom:4px;}
+  .success-banner p{color:var(--cinza-claro);font-size:14px;}
+
+  .btn-clear-all{background:rgba(255,80,80,.1);border:1px solid rgba(255,80,80,.2);color:#ff6b6b;font-size:12px;font-weight:700;padding:8px 16px;border-radius:20px;cursor:pointer;transition:all .2s;}
+  .btn-clear-all:hover{background:rgba(255,80,80,.2);}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge"><span class="dot"></span>Pulso Clínico · Alinhamento Estratégico</div>
+  <h1>Voz dos <em>Parceiros</em></h1>
+  <p class="header-sub">"Suas respostas constroem o evento certo para o público certo."</p>
+  <p class="header-note">Questionário rápido para alinhar formato, estrutura e investimento. Leva menos de 5 minutos.</p>
+</div>
+
+<!-- TOGGLE FORMULÁRIO / PAINEL -->
+<div class="view-toggle">
+  <button class="toggle-btn active" onclick="showView('form')">📋 Responder questionário</button>
+  <button class="toggle-btn" onclick="showView('painel')">📊 Ver respostas coletadas</button>
+</div>
+
+<!-- PROGRESSO (só no form) -->
+<div class="progress-wrap" id="progressWrap">
+  <div class="progress-inner">
+    <div class="progress-bar-bg"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+    <div class="progress-text" id="progressText">0 de 7 seções</div>
+  </div>
+</div>
+
+<!-- FORMULÁRIO -->
+<div class="form-wrap" id="formView">
+
+  <!-- SUCESSO APÓS ENVIO -->
+  <div class="success-banner" id="successBanner">
+    <h3>✅ Resposta registrada com sucesso!</h3>
+    <p>Obrigado. Sua visão foi salva e já está disponível no painel de respostas.</p>
+  </div>
+
+  <!-- S1: IDENTIFICAÇÃO -->
+  <div class="section-block open active" data-section="0">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-num">01</div>
+      <div class="section-header-text"><h3>Identificação</h3><p>Empresa e contato</p></div>
+      <span class="section-status pending" id="status-0">Pendente</span>
+      <span class="section-chevron">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="question">
+        <label><strong>Nome da empresa e seu nome</strong></label>
+        <div class="id-grid">
+          <input class="txt-input" type="text" id="f_empresa" placeholder="Nome da empresa" oninput="updateProgress()">
+          <input class="txt-input" type="text" id="f_nome" placeholder="Seu nome" oninput="updateProgress()">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S2: PÚBLICO -->
+  <div class="section-block" data-section="1">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-num">02</div>
+      <div class="section-header-text"><h3>Público e acesso</h3><p>Quem você consegue trazer</p></div>
+      <span class="section-status pending" id="status-1">Pendente</span>
+      <span class="section-chevron">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="question">
+        <label><strong>Qual perfil você consegue convidar com mais facilidade pela sua base atual?</strong>Marque todos que se aplicam.</label>
+        <div class="options">
+          <label class="opt-label"><input class="opt-input" type="checkbox" id="pub_medico" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker square"></span>Médico proprietário / sócio da clínica</div></label>
+          <label class="opt-label"><input class="opt-input" type="checkbox" id="pub_admin" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker square"></span>Administrador / gestor profissional</div></label>
+          <label class="opt-label"><input class="opt-input" type="checkbox" id="pub_ambos" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker square"></span>Tenho acesso direto a ambos com facilidade</div></label>
+        </div>
+      </div>
+      <div class="q-divider"></div>
+      <div class="question">
+        <label><strong>Quantos médicos-donos você estima conseguir convidar por evento?</strong></label>
+        <div class="options">
+          <label class="opt-label"><input class="opt-input" type="radio" name="qtd_medicos" id="qtd_3" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Até 3</div></label>
+          <label class="opt-label"><input class="opt-input" type="radio" name="qtd_medicos" id="qtd_7" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Entre 4 e 7</div></label>
+          <label class="opt-label"><input class="opt-input" type="radio" name="qtd_medicos" id="qtd_12" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Entre 8 e 12</div></label>
+          <label class="opt-label"><input class="opt-input" type="radio" name="qtd_medicos" id="qtd_mais" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Mais de 12</div></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3: LOCAL -->
+  <div class="section-block" data-section="2">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-num">03</div>
+      <div class="section-header-text"><h3>Local do evento</h3><p>Onde faz mais sentido para o público médico</p></div>
+      <span class="section-status pending" id="status-2">Pendente</span>
+      <span class="section-chevron">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="question">
+        <label><strong>Qual tipo de local atrai melhor um médico-empresário?</strong></label>
+        <div class="options">
+          <label class="opt-label"><input class="opt-input" type="radio" name="local" id="local_sebrae" onchange="handleLocal('sebrae')"><div class="opt-box"><span class="opt-marker"></span>Sebraelab ou auditório CDL — funcional e prático</div></label>
+          <label class="opt-label"><input class="opt-input" type="radio" name="local" id="local_hotel" onchange="handleLocal('hotel')"><div class="opt-box"><span class="opt-marker"></span>Auditório de hotel de negócios — padrão elevado</div></label>
+          <label class="opt-label"><input class="opt-input" type="radio" name="local" id="local_rest" onchange="handleLocal('restaurante')"><div class="opt-box"><span class="opt-marker"></span>Restaurante / almoço executivo — ambiente sofisticado</div></label>
+          <label class="opt-label"><input class="opt-input" type="radio" name="local" id="local_clinica" onchange="handleLocal('clinica')"><div class="opt-box"><span class="opt-marker"></span>Clínica parceira bem estruturada — contexto real</div></label>
+          <label class="opt-label"><input class="opt-input" type="radio" name="local" id="local_outro" onchange="handleLocal('outro')"><div class="opt-box"><span class="opt-marker"></span>Outro</div></label>
+        </div>
+        <div class="cond-box" id="cond_rest">⚠️ Restaurante aumenta o custo por pessoa significativamente e reduz a capacidade de apresentação de conteúdo. Mas pode ser ideal para eventos menores e mais exclusivos com médicos. Vale ponderar.</div>
+        <div class="cond-input" id="cond_outro_local">
+          <textarea class="txt-area" id="local_outro_txt" placeholder="Descreva o local que você sugere..." rows="2" oninput="updateProgress()"></textarea>
+        </div>
+      </div>
+      <div class="q-divider"></div>
+      <div class="question">
+        <label><strong>Se o local fosse mais sofisticado e aumentasse o custo, qual seria sua preferência?</strong>O evento está dimensionado para 40 pessoas.</label>
+        <div class="options">
+          <label class="opt-label"><input class="opt-input" type="radio" name="custo_local" id="cl_simples" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Manter 40 pessoas com local mais simples</div></label>
+          <label class="opt-label"><input class="opt-input" type="radio" name="custo_local" id="cl_reduz" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Reduzir para ~20 pessoas com local mais sofisticado</div></label>
+          <label class="opt-label"><input class="opt-input" type="radio" name="custo_local" id="cl_aumenta" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Aumentar o investimento para manter as 40 pessoas com local melhor</div></label>
+        </div>
+      </div>
+      <div class="q-divider"></div>
+      <div class="question">
+        <label><strong>Sugestão de local específico em Natal (opcional)</strong></label>
+        <textarea class="txt-area" id="f_local_sug" placeholder="Ex: Hotel Praiamar, Terraço do hospital X, Restaurante Y..." rows="2" oninput="updateProgress()"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- S4: CUSTOS -->
+  <div class="section-block" data-section="3">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-num">04</div>
+      <div class="section-header-text"><h3>Estrutura e custo</h3><p>Coffee break, brinde e investimento</p></div>
+      <span class="section-status pending" id="status-3">Pendente</span>
+      <span class="section-chevron">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="question">
+        <label><strong>O coffee break no padrão atual (R$20/pessoa, 40 pessoas) é adequado para atrair médico-empresário?</strong></label>
+        <div class="options">
+          <label class="opt-label"><input class="opt-input" type="radio" name="coffee" id="cof_ok" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Sim, está adequado</div></label>
+          <label class="opt-label"><input class="opt-input" type="radio" name="coffee" id="cof_mais" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Não — precisa ser mais sofisticado (R$35–50/pessoa)</div></label>
+          <label class="opt-label"><input class="opt-input" type="radio" name="coffee" id="cof_almoco" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Para médico, substituiria por almoço/jantar executivo</div></label>
+        </div>
+      </div>
+      <div class="q-divider"></div>
+      <div class="question">
+        <label><strong>O brinde atual (bloco de notas personalizado, R$25/pessoa) faz sentido para o público médico?</strong></label>
+        <div class="options">
+          <label class="opt-label"><input class="opt-input" type="radio" name="brinde" id="bri_ok" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Sim, está bom</div></label>
+          <label class="opt-label"><input class="opt-input" type="radio" name="brinde" id="bri_outro" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Não — prefiro algo mais útil (caneta, item clínico...)</div></label>
+          <label class="opt-label"><input class="opt-input" type="radio" name="brinde" id="bri_sem" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Não é relevante — prefiro investir em outro item</div></label>
+        </div>
+      </div>
+      <div class="q-divider"></div>
+      <div class="question">
+        <label><strong>Qual o limite de investimento da sua empresa por evento no rateio?</strong><span style="font-size:12px;color:var(--cinza);display:block;margin-top:4px;">Valor atual previsto: R$700–R$875 por evento (4 a 5 cotas)</span></label>
+        <div class="options">
+          <label class="opt-label"><input class="opt-input" type="radio" name="invest" id="inv_1k" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Até R$1.000 por evento</div></label>
+          <label class="opt-label"><input class="opt-input" type="radio" name="invest" id="inv_15k" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Até R$1.500 por evento</div></label>
+          <label class="opt-label"><input class="opt-input" type="radio" name="invest" id="inv_2k" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Até R$2.000 por evento</div></label>
+          <label class="opt-label"><input class="opt-input" type="radio" name="invest" id="inv_mais" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Acima de R$2.000 — se o formato justificar</div></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S5: CONTEÚDO -->
+  <div class="section-block" data-section="4">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-num">05</div>
+      <div class="section-header-text"><h3>Conteúdo e temas</h3><p>O que ressoa com médico-empresário</p></div>
+      <span class="section-status pending" id="status-4">Pendente</span>
+      <span class="section-chevron">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="question">
+        <label><strong>Os temas previstos são relevantes para médico-empresário?</strong><span style="font-size:12px;color:var(--cinza);display:block;margin-top:4px;">Crescimento operacional · Produtividade · Faturamento e glosas · Experiência do paciente · IA e futuro</span></label>
+        <div class="options">
+          <label class="opt-label"><input class="opt-input" type="radio" name="temas" id="tem_sim" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Sim, todos fazem sentido para esse público</div></label>
+          <label class="opt-label"><input class="opt-input" type="radio" name="temas" id="tem_parcial" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Parcialmente — alguns precisam de ajuste na linguagem</div></label>
+          <label class="opt-label"><input class="opt-input" type="radio" name="temas" id="tem_nao" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Não — os temas precisam mudar para falar com médico</div></label>
+        </div>
+      </div>
+      <div class="q-divider"></div>
+      <div class="question">
+        <label><strong>Sugestões de temas adicionais ou substitutos para médicos-empresários</strong></label>
+        <textarea class="txt-area" id="f_temas_sug" placeholder="Ex: gestão financeira da clínica, tributação PJ, abertura de sociedade médica..." rows="3" oninput="updateProgress()"></textarea>
+      </div>
+      <div class="q-divider"></div>
+      <div class="question">
+        <label><strong>Quem seria o palestrante ideal para prender a atenção de um médico-dono?</strong>Marque todos que fazem sentido.</label>
+        <div class="options">
+          <label class="opt-label"><input class="opt-input" type="checkbox" id="pal_medico" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker square"></span>Outro médico-empresário com história de crescimento</div></label>
+          <label class="opt-label"><input class="opt-input" type="checkbox" id="pal_consul" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker square"></span>Especialista em gestão de saúde (consultor renomado)</div></label>
+          <label class="opt-label"><input class="opt-input" type="checkbox" id="pal_case" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker square"></span>Representante dos parceiros com case real de clínica</div></label>
+          <label class="opt-label"><input class="opt-input" type="checkbox" id="pal_tema" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker square"></span>Não importa o perfil — tema e formato são mais relevantes</div></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S6: FREQUÊNCIA -->
+  <div class="section-block" data-section="5">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-num">06</div>
+      <div class="section-header-text"><h3>Frequência e formato</h3><p>Ritmo e estrutura dos encontros</p></div>
+      <span class="section-status pending" id="status-5">Pendente</span>
+      <span class="section-chevron">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="question">
+        <label><strong>Com o público sendo médico-empresário, a frequência quinzenal ainda faz sentido?</strong></label>
+        <div class="options">
+          <label class="opt-label"><input class="opt-input" type="radio" name="freq" id="freq_quin" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Sim — quinzenal está ótimo</div></label>
+          <label class="opt-label"><input class="opt-input" type="radio" name="freq" id="freq_mens" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Prefiro mensal — dá mais tempo para captação e preparo</div></label>
+          <label class="opt-label"><input class="opt-input" type="radio" name="freq" id="freq_ind" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker"></span>Indiferente — o que importa é a qualidade do evento</div></label>
+        </div>
+      </div>
+      <div class="q-divider"></div>
+      <div class="question">
+        <label><strong>Qual horário funciona melhor para médico-empresário aparecer?</strong></label>
+        <div class="options">
+          <label class="opt-label"><input class="opt-input" type="checkbox" id="hor_almoco" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker square"></span>Almoço (12h–14h)</div></label>
+          <label class="opt-label"><input class="opt-input" type="checkbox" id="hor_tarde" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker square"></span>Tarde (14h–17h) — como previsto</div></label>
+          <label class="opt-label"><input class="opt-input" type="checkbox" id="hor_noite" onchange="updateProgress()"><div class="opt-box"><span class="opt-marker square"></span>Final de tarde / início de noite (17h–20h)</div></label>
+        </div>
+      </div>
+      <div class="q-divider"></div>
+      <div class="question">
+        <label><strong>Qual dia da semana você prefere?</strong></label>
+        <div class="options horizontal">
+          <label class="opt-label" style="flex:none"><input class="opt-input" type="checkbox" id="dia_seg" onchange="updateProgress()"><div class="opt-box" style="flex:none;padding:10px 18px;"><span class="opt-marker square"></span>Segunda</div></label>
+          <label class="opt-label" style="flex:none"><input class="opt-input" type="checkbox" id="dia_ter" onchange="updateProgress()"><div class="opt-box" style="flex:none;padding:10px 18px;"><span class="opt-marker square"></span>Terça</div></label>
+          <label class="opt-label" style="flex:none"><input class="opt-input" type="checkbox" id="dia_qua" onchange="updateProgress()"><div class="opt-box" style="flex:none;padding:10px 18px;"><span class="opt-marker square"></span>Quarta</div></label>
+          <label class="opt-label" style="flex:none"><input class="opt-input" type="checkbox" id="dia_qui" onchange="updateProgress()"><div class="opt-box" style="flex:none;padding:10px 18px;"><span class="opt-marker square"></span>Quinta</div></label>
+          <label class="opt-label" style="flex:none"><input class="opt-input" type="checkbox" id="dia_sex" onchange="updateProgress()"><div class="opt-box" style="flex:none;padding:10px 18px;"><span class="opt-marker square"></span>Sexta</div></label>
+          <label class="opt-label" style="flex:none"><input class="opt-input" type="checkbox" id="dia_ind" onchange="updateProgress()"><div class="opt-box" style="flex:none;padding:10px 18px;"><span class="opt-marker square"></span>Indiferente</div></label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S7: VISÃO GERAL -->
+  <div class="section-block" data-section="6">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-num">07</div>
+      <div class="section-header-text"><h3>Visão geral e observações</h3><p>O que mais importa para você</p></div>
+      <span class="section-status pending" id="status-6">Pendente</span>
+      <span class="section-chevron">▼</span>
+    </div>
+    <div class="section-body">
+      <div class="question">
+        <label><strong>De 1 a 5, qual sua confiança de que o Pulso Clínico vai gerar resultado comercial real para sua empresa?</strong></label>
+        <div class="scale-wrap" id="scale-confianca">
+          <button type="button" class="scale-btn" onclick="selectScale('scale-confianca',this,'1')">1</button>
+          <button type="button" class="scale-btn" onclick="selectScale('scale-confianca',this,'2')">2</button>
+          <button type="button" class="scale-btn" onclick="selectScale('scale-confianca',this,'3')">3</button>
+          <button type="button" class="scale-btn" onclick="selectScale('scale-confianca',this,'4')">4</button>
+          <button type="button" class="scale-btn" onclick="selectScale('scale-confianca',this,'5')">5</button>
+        </div>
+        <div class="scale-labels"><span>Pouca confiança</span><span>Muita confiança</span></div>
+      </div>
+      <div class="q-divider"></div>
+      <div class="question">
+        <label><strong>Qual é sua principal preocupação ou dúvida sobre o evento neste momento?</strong></label>
+        <textarea class="txt-area" id="f_preocupacao" placeholder="Escreva livremente — sua preocupação é importante para ajustarmos o modelo..." rows="3" oninput="updateProgress()"></textarea>
+      </div>
+      <div class="q-divider"></div>
+      <div class="question">
+        <label><strong>Alguma sugestão, ideia ou ponto que não foi abordado aqui?</strong></label>
+        <textarea class="txt-area" id="f_obs" placeholder="Campo livre para qualquer observação adicional..." rows="3" oninput="updateProgress()"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="submit-wrap">
+    <p style="font-size:13px;color:var(--cinza);margin-bottom:16px;">Suas respostas serão salvas e consolidadas pela HealthComp com as dos demais parceiros.</p>
+    <button class="btn-submit" onclick="submitForm()">
+      Salvar minhas respostas
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- PAINEL DE RESPOSTAS -->
+<div id="painelView">
+  <div class="painel-header">
+    <div>
+      <h2><em>Painel</em> de Respostas</h2>
+      <p style="font-size:13px;color:var(--cinza);margin-top:4px;">Respostas salvas dos parceiros do Pulso Clínico</p>
+    </div>
+    <div class="painel-stats">
+      <div class="painel-stat"><span class="val" id="stat-total">0</span><span class="lbl">respostas</span></div>
+    </div>
+  </div>
+  <div id="painelContent"></div>
+</div>
+
+<script>
+  let scaleValues = {};
+
+  function toggleSection(header) {
+    const block = header.closest('.section-block');
+    const isOpen = block.classList.contains('open');
+    document.querySelectorAll('.section-block').forEach(b => b.classList.remove('open'));
+    if (!isOpen) { block.classList.add('open'); block.classList.add('active'); }
+    updateProgress();
+  }
+
+  function handleLocal(tipo) {
+    document.getElementById('cond_rest').classList.toggle('show', tipo === 'restaurante');
+    document.getElementById('cond_outro_local').classList.toggle('show', tipo === 'outro');
+    updateProgress();
+  }
+
+  function selectScale(id, btn, value) {
+    document.getElementById(id).querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    scaleValues[id] = value;
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const sections = document.querySelectorAll('.section-block');
+    let done = 0;
+    sections.forEach((block, i) => {
+      const hasR = block.querySelector('input[type=radio]:checked');
+      const hasC = block.querySelector('input[type=checkbox]:checked');
+      const hasT = [...block.querySelectorAll('.txt-input,.txt-area')].some(t => t.value.trim().length > 1);
+      const hasS = block.querySelector('.scale-btn.selected');
+      if (hasR || hasC || hasT || hasS) {
+        done++;
+        document.getElementById('status-'+i).textContent = 'Respondido';
+        document.getElementById('status-'+i).className = 'section-status done';
+      }
+    });
+    const pct = Math.round((done/sections.length)*100);
+    document.getElementById('progressBar').style.width = pct+'%';
+    document.getElementById('progressText').textContent = done+' de '+sections.length+' seções';
+  }
+
+  function v(id) {
+    const el = document.getElementById(id);
+    if (!el) return '';
+    return el.value || '';
+  }
+
+  function checked(id) {
+    const el = document.getElementById(id);
+    return el && el.checked;
+  }
+
+  function radioVal(name) {
+    const el = document.querySelector('input[name="'+name+'"]:checked');
+    if (!el) return '';
+    const box = el.nextElementSibling;
+    return box ? box.innerText.trim() : '';
+  }
+
+  async function submitForm() {
+    const empresa = v('f_empresa').trim();
+    const nome = v('f_nome').trim();
+    if (!empresa || !nome) {
+      alert('Por favor, preencha o nome da empresa e seu nome antes de enviar.');
+      document.querySelector('.section-block').classList.add('open');
+      return;
+    }
+
+    const publicos = [];
+    if (checked('pub_medico')) publicos.push('Médico proprietário/sócio');
+    if (checked('pub_admin')) publicos.push('Administrador/gestor');
+    if (checked('pub_ambos')) publicos.push('Ambos com facilidade');
+
+    const palestrantes = [];
+    if (checked('pal_medico')) palestrantes.push('Médico-empresário com história');
+    if (checked('pal_consul')) palestrantes.push('Consultor especialista em saúde');
+    if (checked('pal_case')) palestrantes.push('Parceiro com case real');
+    if (checked('pal_tema')) palestrantes.push('Tema e formato > perfil');
+
+    const resposta = {
+      id: Date.now().toString(),
+      timestamp: new Date().toLocaleString('pt-BR'),
+      empresa,
+      nome,
+      publico: publicos.join(' + ') || '—',
+      qtd_medicos: radioVal('qtd_medicos') || '—',
+      local: radioVal('local') || '—',
+      local_outro: v('local_outro_txt'),
+      local_sug: v('f_local_sug'),
+      custo_local: radioVal('custo_local') || '—',
+      coffee: radioVal('coffee') || '—',
+      brinde: radioVal('brinde') || '—',
+      investimento: radioVal('invest') || '—',
+      temas: radioVal('temas') || '—',
+      temas_sug: v('f_temas_sug'),
+      palestrante: palestrantes.join(', ') || '—',
+      frequencia: radioVal('freq') || '—',
+      horario: ['almoco','tarde','noite'].filter(d => {const el=document.getElementById('hor_'+d);return el&&el.checked;}).map(d=>({'almoco':'Almoço (12h-14h)','tarde':'Tarde (14h-17h)','noite':'Final de tarde/noite (17h-20h)'}[d])).join(', ') || '—',
+      dia: ['seg','ter','qua','qui','sex','ind'].filter(d => {const el=document.getElementById('dia_'+d);return el&&el.checked;}).map(d=>({'seg':'Segunda','ter':'Terça','qua':'Quarta','qui':'Quinta','sex':'Sexta','ind':'Indiferente'}[d])).join(', ') || '—',
+      confianca: scaleValues['scale-confianca'] || '—',
+      preocupacao: v('f_preocupacao'),
+      obs: v('f_obs')
+    };
+
+    const btn = document.querySelector('.btn-submit');
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+
+    try {
+      const fd = new FormData();
+      fd.append('Empresa', resposta.empresa);
+      fd.append('Nome', resposta.nome);
+      fd.append('Data e hora', resposta.timestamp);
+      fd.append('Publico que consegue convidar', resposta.publico);
+      fd.append('Medicos-donos estimados por evento', resposta.qtd_medicos);
+      fd.append('Local ideal', resposta.local + (resposta.local_outro ? ' — ' + resposta.local_outro : ''));
+      fd.append('Sugestao de local especifico', resposta.local_sug || '—');
+      fd.append('Se custo aumentar', resposta.custo_local);
+      fd.append('Coffee break', resposta.coffee);
+      fd.append('Brinde', resposta.brinde);
+      fd.append('Limite de investimento por evento', resposta.investimento);
+      fd.append('Temas atuais sao adequados', resposta.temas);
+      fd.append('Sugestoes de temas', resposta.temas_sug || '—');
+      fd.append('Palestrante ideal', resposta.palestrante);
+      fd.append('Frequencia', resposta.frequencia);
+      fd.append('Horario ideal', resposta.horario);
+      fd.append('Dias da semana', resposta.dia);
+      fd.append('Confianca no ROI 1a5', resposta.confianca);
+      fd.append('Principal preocupacao', resposta.preocupacao || '—');
+      fd.append('Observacoes extras', resposta.obs || '—');
+
+      const res = await fetch('https://formspree.io/f/mkopqdaz', {
+        method: 'POST',
+        body: fd,
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (res.ok) {
+        document.getElementById('successBanner').classList.add('show');
+        window.scrollTo({top:0, behavior:'smooth'});
+        setTimeout(() => document.getElementById('successBanner').classList.remove('show'), 6000);
+        btn.textContent = 'Enviado com sucesso!';
+        btn.style.background = '#007A54';
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.innerHTML = 'Salvar minhas respostas';
+          btn.style.background = '';
+        }, 5000);
+      } else {
+        throw new Error('Erro');
+      }
+    } catch(e) {
+      alert('Erro ao enviar. Verifique sua conexão e tente novamente.');
+      btn.disabled = false;
+      btn.textContent = 'Salvar minhas respostas';
+    }
+  }
+
+  function loadPainel() {
+    const painelEl = document.getElementById('painelContent');
+    painelEl.innerHTML = `
+      <div style="text-align:center;padding:48px 24px;">
+        <div style="font-size:48px;margin-bottom:20px;">📊</div>
+        <h3 style="font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--verde);margin-bottom:12px;">Respostas no FormSpree</h3>
+        <p style="font-size:15px;color:var(--cinza-claro);line-height:1.7;max-width:440px;margin:0 auto 28px;">As respostas dos parceiros chegam direto no seu e-mail e ficam armazenadas no painel do FormSpree.</p>
+        <a href="https://formspree.io/forms/mkopqdaz/submissions" target="_blank"
+           style="display:inline-flex;align-items:center;gap:10px;background:var(--verde);color:var(--preto);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;padding:14px 32px;border-radius:60px;text-decoration:none;">
+          Ver todas as respostas →
+        </a>
+        <p style="font-size:12px;color:var(--cinza);margin-top:16px;">Loga com o e-mail que você usou para criar a conta no FormSpree</p>
+      </div>
+    `;
+
+  }
+
+  function showView(view) {
+    const btns = document.querySelectorAll('.toggle-btn');
+    document.getElementById('formView').style.display = view === 'form' ? 'block' : 'none';
+    document.getElementById('painelView').style.display = view === 'painel' ? 'block' : 'none';
+    document.getElementById('progressWrap').style.display = view === 'form' ? 'block' : 'none';
+    btns[0].classList.toggle('active', view === 'form');
+    btns[1].classList.toggle('active', view === 'painel');
+    if (view === 'painel') loadPainel();
+  }
+</script>
+</body>
+</html>
